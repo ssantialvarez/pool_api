@@ -1,13 +1,29 @@
 class PlayersController < ApplicationController
   before_action :authorize
 
-  def private
-    render json: { message: "Hello from a private endpoint! You need to be authenticated to see this." }
+  def show
+    render json: { message: "Showing users info." }
   end
 
-  def private_scoped
+  def update
+    render json: { message: "Updating user." }
+  end
+
+  def index
     validate_permissions [ "admin" ] do
-      render json: { message: "Hello from a private endpoint! You need to be authenticated and have a scope of admin to see this." }
+      render json: { message: "Showing all players admin only." }
+    end
+  end
+
+  def create
+    validate_permissions [ "admin" ] do
+      render json: { message: "Creating player admin only." }
+    end
+  end
+
+  def destroy
+    validate_permissions [ "admin" ] do
+      render json: { message: "Destroying user admin only" }
     end
   end
 end
