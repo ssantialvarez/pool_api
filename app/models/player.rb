@@ -11,6 +11,6 @@ class Player < ApplicationRecord
   before_save :default_values
   def default_values
     # self.status ||= 'P' # note self.status = 'P' if self.status.nil? might better for boolean fields (per @frontendbeauty)
-    self_ranking ||= 0
+    self.ranking = 0 if self.ranking.nil?
   end
 end

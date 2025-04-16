@@ -1,3 +1,6 @@
+# ./config/auth0.yml
 development:
-  domain: dev-4yhmgnvzoefgdi26.us.auth0.com
-  audience: http://localhost:3000
+  auth0_domain: dev-4yhmgnvzoefgdi26.us.auth0.com
+  auth0_client_id: pAHPtThlC2t0rDIy6fV6wqvehMSy2G8g
+  auth0_client_secret: kpaAoKUbblk9cyM3XMTODMYrJK7ifvw7t0qfIMD0XlRnX_QcU0pGiTtY8ckk0n_G
+  auth0_audience: http://localhost:3000
