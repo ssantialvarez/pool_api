@@ -19,7 +19,7 @@ class Auth0Client
 
   # Helper Functions
   def self.domain_url
-    "https://#{Rails.configuration.auth0.domain}/"
+    "https://#{AUTH0_CONFIG["auth0_domain"]}/"
   end
 
   def self.decode_token(token, jwks_hash)

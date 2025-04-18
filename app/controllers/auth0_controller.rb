@@ -11,7 +11,11 @@ class Auth0Controller < ApplicationController
 
     player.save
   end
-
+  # Called by /authorization endpoint after login
+  # checks if the authorization code exists and asks for access token to Auth0 Tenant
+  # if successful checks the ID token if the user is already registered
+  # if not, calls /auth/register to auto-create the player
+  # redirects to /dashboard
   def callback
     code = params[:code]
     if code != nil
@@ -45,12 +49,11 @@ class Auth0Controller < ApplicationController
     else
       parsed_response = "No access token."
     end
+
     id_token = parsed_response["id_token"]
     decoded_token = JWT.decode(id_token, nil, false) # false = does not verify firm
-
     payload = decoded_token[0]
     auth0_id = payload["sub"]
-
 
     player = Player.find_by(auth0_id: auth0_id)
     if player == nil
