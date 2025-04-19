@@ -4,8 +4,8 @@ class Player < ApplicationRecord
   validates :name, presence: true
   validates :ranking, numericality: { only_integer: true }, allow_nil: true
 
-  has_many :matches_as_player1, class_name: "Match", foreign_key: "player1_id", dependent: :nullify
-  has_many :matches_as_player2, class_name: "Match", foreign_key: "player2_id", dependent: :nullify
+  has_many :matches_as_player1, class_name: "Match", foreign_key: "player1_id", dependent: :delete_all
+  has_many :matches_as_player2, class_name: "Match", foreign_key: "player2_id", dependent: :delete_all
   has_many :wins, class_name: "Match", foreign_key: "winner_id"
 
   before_save :default_values

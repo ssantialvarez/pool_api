@@ -43,7 +43,11 @@ class PlayersController < ApplicationController
         p.profile_picture_url = params[:picture]
       end
 
-      player.save
+      if player.save
+        render json: player, status: :created  # 201 Created
+      else
+        render json: { errors: player.errors.full_messages }, status: :unprocessable_entity  # 422
+      end
     end
   end
 
@@ -52,7 +56,7 @@ class PlayersController < ApplicationController
     validate_permissions [ "admin" ] do
       id = params[:id]
       Player.destroy_by(id: id)
-      render json: { message: "Destroying user #{id} admin only" }
+      render json: { message: "Deleting user #{id} admin only" }
     end
   end
 end

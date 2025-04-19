@@ -3,18 +3,22 @@ require "net/http"
 
 class Auth0Controller < ApplicationController
   def register
-    player = Player.new do |p|
-      p.auth0_id = params[:sub]
-      p.name = params[:name]
-      p.profile_picture_url = params[:picture]
+    # Called by /auth/callback endpoint
+    # checks if the player already exists in the database
+    # if not, creates a new player with the data from Auth0
+    # params = { "sub" => payload["sub"], "name" => payload["name"], "picture" => payload["picture"] }
+    player = Player.find_or_initialize_by(
+      auth0_id: params[:sub]
+    )
+    # if the player is persisted it means that the player already exists in the database
+    if !player.persisted?
+      player.name = params[:name]
+      player.profile_picture_url = params[:picture]
+      player.save
     end
-
-    player.save
   end
   # Called by /authorization endpoint after login
   # checks if the authorization code exists and asks for access token to Auth0 Tenant
-  # if successful checks the ID token if the user is already registered
-  # if not, calls /auth/register to auto-create the player
   # redirects to /dashboard
   def callback
     code = params[:code]
@@ -53,14 +57,8 @@ class Auth0Controller < ApplicationController
     id_token = parsed_response["id_token"]
     decoded_token = JWT.decode(id_token, nil, false) # false = does not verify firm
     payload = decoded_token[0]
-    auth0_id = payload["sub"]
-
-    player = Player.find_by(auth0_id: auth0_id)
-    if player == nil
-      params = { "sub" => payload["sub"], "name" => payload["name"], "picture" => payload["picture"] }
-      Net::HTTP.post_form(URI.parse("http://localhost:3000/auth/register"), params)
-    end
-
+    params = { "sub" => payload["sub"], "name" => payload["name"], "picture" => payload["picture"] }
+    Net::HTTP.post_form(URI.parse("http://localhost:3000/auth/register"), params)
 
     redirect_to "http://localhost:8080/dashboard?access_token=#{parsed_response["access_token"]}"
   end
