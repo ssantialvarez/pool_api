@@ -13,9 +13,13 @@ class PlayersController < ApplicationController
   # It uses the already decoded token to look for the user by auth0_id.
   def update
     name = params[:name]
-    profile_picture_url = params[:profile_picture_url]
-
+    profile_picture = params[:profile_picture]
     player = Player.find_by(auth0_id: @decoded_token[0][0]["sub"])
+    if profile_picture.present?
+      player.profile_picture.attach(params[:profile_picture])
+      profile_picture_url = url_for(player.profile_picture)
+    end
+
     player.update(
       name: name.present? ? name : player.name,
       profile_picture_url: profile_picture_url.present? ? profile_picture_url : player.profile_picture_url
@@ -38,12 +42,13 @@ class PlayersController < ApplicationController
   def create
     validate_permissions [ "admin" ] do
       player = Player.new do |p|
-        p.auth0_id = params[:sub]
+        p.auth0_id = params[:auth0_id]
         p.name = params[:name]
-        p.profile_picture_url = params[:picture]
+        p.profile_picture_url = "https://pool-app-storage.s3.us-east-2.amazonaws.com/foto_de_perfil.jpg"
       end
-
+      player.profile_picture.attach(params[:profile_picture])
       if player.save
+        player.update(profile_picture_url: url_for(player.profile_picture))
         render json: player, status: :created  # 201 Created
       else
         render json: { errors: player.errors.full_messages }, status: :unprocessable_entity  # 422
