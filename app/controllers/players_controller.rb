@@ -32,7 +32,7 @@ class PlayersController < ApplicationController
   # Allow optional filtering by name  as query param.
   def index
     validate_permissions [ "admin" ] do
-      players = Player.where("name LIKE ?",
+      players = Player.where("name LIKE ?", "%" +
         Player.sanitize_sql_like(params[:name]) + "%")
       render json: players
     end
