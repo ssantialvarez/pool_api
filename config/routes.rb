@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
   post "auth/register" => "auth0#register"
   get "auth/callback" => "auth0#callback"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

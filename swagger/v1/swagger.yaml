@@ -1,0 +1,362 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/matches":
+    post:
+      summary: Creates new match.
+      tags:
+      - Matches
+      security:
+      - bearer: []
+      parameters: []
+      responses:
+        '201':
+          description: Match created successfully.
+        '400':
+          description: Bad request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/new_match"
+            examples:
+              basic:
+                summary: Request example description
+                value:
+                  player1_id: 1
+                  player2_id: 2
+                  start_time: "-4712-01-01T00:00:00+00:00"
+                  table_number: 1
+    get:
+      summary: List all matches.
+      tags:
+      - Matches
+      security:
+      - bearer: []
+      parameters:
+      - name: status
+        in: query
+        enum:
+          ongoing: Retrieves ongoing matches.
+          completed: Retrieves completed matches.
+          upcoming: Retrieves upcoming matches.
+        description: "Filter by status:\n * `ongoing` Retrieves ongoing matches.\n
+          * `completed` Retrieves completed matches.\n * `upcoming` Retrieves upcoming
+          matches.\n "
+      responses:
+        '200':
+          description: Returned matches successfully.
+        '400':
+          description: Bad request.
+  "/matches/{id}":
+    get:
+      summary: Retrieves a match
+      tags:
+      - Matches
+      parameters:
+      - name: id
+        in: path
+        description: Match ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Match found.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/match"
+        '404':
+          description: Match not found.
+    patch:
+      summary: Updates a match partially
+      tags:
+      - Matches
+      parameters:
+      - name: id
+        in: path
+        description: Match ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Match updated successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/match"
+        '404':
+          description: Match not found.
+        '409':
+          description: Double booking detected.
+    put:
+      summary: Updates a match
+      tags:
+      - Matches
+      parameters:
+      - name: id
+        in: path
+        description: Match ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Match updated successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/match"
+        '404':
+          description: Match not found.
+        '409':
+          description: Double booking detected.
+    delete:
+      summary: 'Destroys a match '
+      tags:
+      - Matches
+      parameters:
+      - name: id
+        in: path
+        description: Match ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Match deleted successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/match"
+        '404':
+          description: Match not found.
+        '409':
+          description: Ongoing match cannot deleted.
+  "/players":
+    post:
+      summary: Creates new player.
+      tags:
+      - Players
+      security:
+      - bearer: []
+      parameters: []
+      responses:
+        '201':
+          description: Player created successfully.
+        '400':
+          description: Bad request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/new_player"
+            examples:
+              basic:
+                summary: Request example description
+                value:
+                  name: John
+                  auth0_id: auth0|432212
+                  ranking: 1
+                  profile_picture_url: https://pool-app-storage.s3.us-east-2.amazonaws.com/foto_de_perfil.jpg
+    get:
+      summary: List all players (only admin users).
+      tags:
+      - Players
+      security:
+      - bearer: []
+      parameters:
+      - name: name
+        in: query
+        description: Filter by name
+      responses:
+        '200':
+          description: Returned players successfully.
+        '400':
+          description: Bad request.
+  "/players/{id}":
+    patch:
+      summary: Updates a player partially
+      tags:
+      - Players
+      parameters:
+      - name: id
+        in: path
+        description: Player ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Player updated successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/player"
+        '404':
+          description: Player not found.
+    put:
+      summary: Updates a player
+      tags:
+      - Players
+      parameters:
+      - name: id
+        in: path
+        description: Player ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Player updated successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/player"
+        '404':
+          description: Player not found.
+    delete:
+      summary: 'Destroys a player '
+      tags:
+      - Players
+      parameters:
+      - name: id
+        in: path
+        description: Match ID
+        required: true
+        schema:
+          type: integer
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Player deleted successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/match"
+        '404':
+          description: Player not found.
+  "/players/me":
+    get:
+      summary: Retrieves player information.
+      tags:
+      - Players
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Player retrieved successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/player"
+servers:
+- url: http://localhost:3000
+  description: Local server
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    match:
+      type: object
+      properties:
+        id:
+          type: integer
+        player1_id:
+          type: integer
+        player2_id:
+          type: integer
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+        winner_id:
+          type: string
+          nullable: true
+        table_number:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    player:
+      type: object
+      properties:
+        id:
+          type: integer
+        auth0_id:
+          type: string
+        name:
+          type: string
+        ranking:
+          type: integer
+        profile_picture_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    new_match:
+      type: object
+      properties:
+        player1_id:
+          type: integer
+        player2_id:
+          type: integer
+        start_time:
+          type: string
+          format: date-time
+        table_number:
+          type: integer
+          nullable: true
+      required:
+      - player1_id
+      - player2_id
+      - start_time
+    new_player:
+      type: object
+      properties:
+        auth0_id:
+          type: string
+        name:
+          type: string
+        ranking:
+          type: integer
+          nullable: true
+        profile_picture_url:
+          type: string
+          format: uri
+      required:
+      - name
+      - profile_picture_url
+      - auth0_id
