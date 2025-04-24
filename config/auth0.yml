@@ -1,6 +1,18 @@
 # ./config/auth0.yml
+default: &default
+  auth0_domain: <%= ENV["AUTH0_DOMAIN"] %>
+  auth0_client_id: <%= ENV["AUTH0_CLIENT_ID"] %>
+  auth0_client_secret: <%= ENV["AUTH0_CLIENT_SECRET"] %>
+  auth0_audience: <%= ENV["AUTH0_AUDIENCE"] %>
+  auth0_callback_url: https://pool-api-sdoe.onrender.com/auth/callback
+
 development:
+  <<: *default
   auth0_domain: dev-4yhmgnvzoefgdi26.us.auth0.com
   auth0_client_id: pAHPtThlC2t0rDIy6fV6wqvehMSy2G8g
   auth0_client_secret: kpaAoKUbblk9cyM3XMTODMYrJK7ifvw7t0qfIMD0XlRnX_QcU0pGiTtY8ckk0n_G
   auth0_audience: http://localhost:3000
+  auth0_callback_url: http://localhost:3000/auth/callback
+
+production:
+  <<: *default

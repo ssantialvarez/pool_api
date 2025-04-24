@@ -33,7 +33,7 @@ class Auth0Controller < ApplicationController
       request["Accept"] = "application/json"
 
       request.body = URI.encode_www_form(
-        redirect_uri: "http://localhost:3000/auth/callback",
+        redirect_uri: AUTH0_CONFIG["auth0_callback_url"],
         client_id: AUTH0_CONFIG["auth0_client_id"],
         client_secret: AUTH0_CONFIG["auth0_client_secret"],
         grant_type: "authorization_code",
@@ -58,8 +58,12 @@ class Auth0Controller < ApplicationController
     decoded_token = JWT.decode(id_token, nil, false) # false = does not verify firm
     payload = decoded_token[0]
     params = { "sub" => payload["sub"], "name" => payload["name"], "picture" => payload["picture"] }
-    Net::HTTP.post_form(URI.parse("http://localhost:3000/auth/register"), params)
+    Net::HTTP.post_form(URI.parse("#{request.base_url}/auth/register"), params)
 
-    redirect_to "http://localhost:8080/dashboard?access_token=#{parsed_response["access_token"]}"
+
+    # i want to redirect if env domain is given, if not localhost
+    # i want to redirect to localhost:8080/dashboard?access_token=token
+    domain = ENV["DOMAIN"] ? ENV["DOMAIN"] : "http://localhost:8080"
+    redirect_to "#{domain}/dashboard?access_token=#{parsed_response["access_token"]}"
   end
 end
