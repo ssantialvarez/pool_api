@@ -39,28 +39,46 @@ jobs:
         
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pool_api_test
+  
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+  
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
+  
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
-
+  
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h 127.0.0.1 -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 5
+          done
+  
       - name: Set up database
         env:
           RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/pool_api_test
         run: |
           bin/rails db:create
           bin/rails db:schema:load
-
+  
       - name: Run RSpec tests
         env:
           RAILS_ENV: test
-        run: bundle expect rspec spec/models --format documentation
-
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/pool_api_test
+        run: bundle exec rspec spec/models --format documentation
