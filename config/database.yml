@@ -86,8 +86,8 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: pool_api_production
-    username: pool_api
+    database: pool_api_database
+    username: pool_api_database_user
     password: <%= ENV["POOL_API_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
