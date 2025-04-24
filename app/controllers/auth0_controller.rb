@@ -58,12 +58,15 @@ class Auth0Controller < ApplicationController
     decoded_token = JWT.decode(id_token, nil, false) # false = does not verify firm
     payload = decoded_token[0]
     params = { "sub" => payload["sub"], "name" => payload["name"], "picture" => payload["picture"] }
-    Net::HTTP.post_form(URI.parse("#{request.base_url}/auth/register"), params)
+
+    host = Rails.env.development?  ? "http://localhost:3000": "https://pool-api-sdoe.onrender.com"
 
 
+    Net::HTTP.post_form(URI.parse("#{host}/auth/register"), params)
     # i want to redirect if env domain is given, if not localhost
     # i want to redirect to localhost:8080/dashboard?access_token=token
     domain = ENV["DOMAIN"] ? ENV["DOMAIN"] : "http://localhost:8080"
+    puts domain
     redirect_to "#{domain}/dashboard?access_token=#{parsed_response["access_token"]}"
   end
 end
