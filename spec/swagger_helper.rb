@@ -26,6 +26,10 @@ RSpec.configure do |config|
         {
           url: 'http://localhost:3000',
           description: 'Local server'
+        },
+        {
+          url: 'https://pool-api-sdoe.onrender.com',
+          description: 'Cloud server'
         }
       ],
       components: {

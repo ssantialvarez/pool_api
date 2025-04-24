@@ -66,7 +66,7 @@ class Auth0Controller < ApplicationController
     # i want to redirect if env domain is given, if not localhost
     # i want to redirect to localhost:8080/dashboard?access_token=token
     domain = ENV["DOMAIN"] ? ENV["DOMAIN"] : "http://localhost:8080"
-    puts domain
-    redirect_to "#{domain}/dashboard?access_token=#{parsed_response["access_token"]}"
+
+    redirect_to "#{domain}/dashboard?access_token=#{parsed_response["access_token"]}", allow_other_host: true
   end
 end
