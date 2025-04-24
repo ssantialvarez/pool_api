@@ -15,6 +15,13 @@ gem "puma", ">= 5.0"
 gem "aws-sdk-s3"
 
 gem "jwt"
+gem "rswag-api"
+gem "rswag-ui"
+
+group :development, :test do
+  gem "rspec-rails"
+  gem "rswag-specs"
+end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
