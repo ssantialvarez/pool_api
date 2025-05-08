@@ -82,4 +82,8 @@ This application is live at:
 
 • https://pool-api-sdoe.onrender.com
 
+• https://pool-web-app.onrender.com
+
+• https://github.com/ssantialvarez/pool_web_app
+
 Deployment is managed through Render with continuous deployment from the main branch.
