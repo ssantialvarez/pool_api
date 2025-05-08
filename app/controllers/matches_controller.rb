@@ -124,7 +124,8 @@ class MatchesController < ApplicationController
   private
 
   def checks_double_booking(player1_id, player2_id, start_time, end_time = nil, table_number = nil)
-    # Check if start_time and end_time is in ISO 8601 format.
+    return false if start_time.blank? # Handle missing or empty start_time
+
     start_time = Time.parse(start_time.to_s) unless start_time.is_a?(Time)
     end_time = start_time + 1.hour if end_time.nil?
     end_time = Time.parse(end_time.to_s) unless end_time.is_a?(Time)
