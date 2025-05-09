@@ -39,27 +39,37 @@ RSpec.describe 'api/players', type: :request do
       end
     end
   end
-  path '/players/{id}' do
+  path '/players/me' do
     patch 'Updates a player partially' do
       tags 'Players'
+      consumes 'multipart/form-data'
       produces 'application/json'
-      parameter name: 'id', in: :path, type: :integer, description: 'Player ID'
+      parameter name: :name, in: :form, type: :string, description: 'Player name'
+      parameter name: :profile_picture, in: :form, type: :file, description: 'Profile picture file'
+
       security [ bearer: [] ]
 
       response '200', 'Player updated successfully.' do
+        let(:id) { create(:player).id }
+        let(:name) { 'Updated Name' }
+        let(:profile_picture) { fixture_file_upload(Rails.root.join('spec/fixtures/files/avatar.jpg'), 'image/jpeg') }
+
         schema '$ref' => '#/components/schemas/player'
         run_test!
       end
 
       response '404', 'Player not found.' do
-        let(:request_params) { { 'id' => 'invalid' } }
+        let(:id) { -1 }
         run_test!
       end
     end
     put 'Updates a player' do
       tags 'Players'
+      consumes 'multipart/form-data'
       produces 'application/json'
-      parameter name: 'id', in: :path, type: :integer, description: 'Player ID'
+      parameter name: :name, in: :form, type: :string, description: 'Player name'
+      parameter name: :profile_picture, in: :form, type: :file, description: 'Profile picture file'
+
       security [ bearer: [] ]
 
       response '200', 'Player updated successfully.' do
@@ -72,6 +82,18 @@ RSpec.describe 'api/players', type: :request do
         run_test!
       end
     end
+    get 'Retrieves player information.' do
+      tags 'Players'
+      produces 'application/json'
+      security [ bearer: [] ]
+
+      response '200', 'Player retrieved successfully.' do
+        schema '$ref' => '#/components/schemas/player'
+        run_test!
+      end
+    end
+  end
+  path '/players/{:id}' do
     delete 'Destroys a player ' do
       tags 'Players'
       produces 'application/json'
@@ -85,18 +107,6 @@ RSpec.describe 'api/players', type: :request do
 
       response '404', 'Player not found.' do
         let(:request_params) { { 'id' => 'invalid' } }
-        run_test!
-      end
-    end
-  end
-  path '/players/me' do
-    get 'Retrieves player information.' do
-      tags 'Players'
-      produces 'application/json'
-      security [ bearer: [] ]
-
-      response '200', 'Player retrieved successfully.' do
-        schema '$ref' => '#/components/schemas/player'
         run_test!
       end
     end

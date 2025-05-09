@@ -46,9 +46,15 @@ class PlayersController < ApplicationController
         p.name = params[:name]
         p.profile_picture_url = "https://pool-app-storage.s3.us-east-2.amazonaws.com/foto_de_perfil.jpg"
       end
-      player.profile_picture.attach(params[:profile_picture])
+
+      # Save the player to the database
       if player.save
-        player.update(profile_picture_url: url_for(player.profile_picture))
+        # Attach the profile picture if provided
+        if params[:profile_picture].present?
+          # Use ActiveStorage to attach the file
+          player.profile_picture.attach(params[:profile_picture])
+          player.update(profile_picture_url: url_for(player.profile_picture))
+        end
         render json: player, status: :created  # 201 Created
       else
         render json: { errors: player.errors.full_messages }, status: :unprocessable_entity  # 422

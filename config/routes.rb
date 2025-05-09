@@ -24,7 +24,4 @@ Rails.application.routes.draw do
   patch "matches/:id" => "matches#update"
   get "matches/:id" => "matches#show"
   delete "matches/:id" => "matches#destroy"
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

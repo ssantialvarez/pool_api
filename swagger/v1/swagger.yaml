@@ -187,18 +187,22 @@ paths:
           description: Returned players successfully.
         '400':
           description: Bad request.
-  "/players/{id}":
+  "/players/me":
     patch:
       summary: Updates a player partially
       tags:
       - Players
       parameters:
-      - name: id
-        in: path
-        description: Player ID
-        required: true
+      - name: name
+        in: form
+        description: Player name
         schema:
-          type: integer
+          type: string
+      - name: profile_picture
+        in: form
+        description: Profile picture file
+        schema:
+          type: file
       security:
       - bearer: []
       responses:
@@ -215,12 +219,16 @@ paths:
       tags:
       - Players
       parameters:
-      - name: id
-        in: path
-        description: Player ID
-        required: true
+      - name: name
+        in: form
+        description: Player name
         schema:
-          type: integer
+          type: string
+      - name: profile_picture
+        in: form
+        description: Profile picture file
+        schema:
+          type: file
       security:
       - bearer: []
       responses:
@@ -232,6 +240,20 @@ paths:
                 "$ref": "#/components/schemas/player"
         '404':
           description: Player not found.
+    get:
+      summary: Retrieves player information.
+      tags:
+      - Players
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: Player retrieved successfully.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/player"
+  "/players/{:id}":
     delete:
       summary: 'Destroys a player '
       tags:
@@ -254,20 +276,6 @@ paths:
                 "$ref": "#/components/schemas/match"
         '404':
           description: Player not found.
-  "/players/me":
-    get:
-      summary: Retrieves player information.
-      tags:
-      - Players
-      security:
-      - bearer: []
-      responses:
-        '200':
-          description: Player retrieved successfully.
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/player"
 servers:
 - url: http://localhost:3000
   description: Local server
@@ -362,3 +370,11 @@ components:
       - name
       - profile_picture_url
       - auth0_id
+    update_player:
+      type: object
+      properties:
+        name:
+          type: string
+        profile_picture:
+          type: string
+          format: binary

@@ -86,6 +86,13 @@ RSpec.configure do |config|
               profile_picture_url: { type: 'string', format: 'uri' }
             },
             required: %w[name profile_picture_url auth0_id]
+          },
+          update_player: {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              profile_picture: { type: 'string', format: 'binary' } # Specify binary format for file uploads
+            }
           }
         }
       }

@@ -13,10 +13,11 @@ class Auth0Controller < ApplicationController
     # if the player is persisted it means that the player already exists in the database
     if !player.persisted?
       player.name = params[:name]
-      player.profile_picture_url = params[:picture]
+      player.profile_picture_url = "https://pool-app-storage.s3.us-east-2.amazonaws.com/foto_de_perfil.jpg"
       player.save
     end
   end
+
   # Called by /authorization endpoint after login
   # checks if the authorization code exists and asks for access token to Auth0 Tenant
   # redirects to /dashboard
